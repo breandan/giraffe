@@ -245,6 +245,12 @@ public:
 		return ret;
 	}
 
+	std::string GetFeatures() {
+        std::vector<float> m_convTmp;
+        FeaturesConv::ConvertBoardToNN(this, m_convTmp);
+        return m_convTmp;
+    }
+
 private:
 	template <MOVE_TYPES MT> void GenerateAllPseudoLegalMoves_(MoveList &moveList) const;
 	template <MOVE_TYPES MT> void GenerateKingMoves_(Color color, MoveList &moveList) const;
@@ -292,3 +298,12 @@ uint64_t DebugPerftWithNull(Board &b, uint32_t depth);
 void DebugRunPerftTests();
 
 #endif // BOARD_H
+
+#include <boost/python.hpp>
+using namespace boost::python;
+
+BOOST_PYTHON_MODULE(feat)
+{
+    class_<FeaturesConv, boost::noncopyable>("FeaturesConv", no_init)
+        .def("get_features", &Board::GetFeatures)
+}

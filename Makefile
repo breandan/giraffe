@@ -18,6 +18,10 @@ CXXFLAGS_DEP = \
 #LDFLAGS=-L. -Lgtb -lm -ltcmalloc -lgtb
 LDFLAGS=-L. -Lgtb -lm -lgtb
 
+BOOSTLIB = -lboost_python3
+  
+
+
 ifeq ($(PG), 1)
 	CXXFLAGS += -g -O2 -pg
 else ifeq ($(DEBUG),1)
@@ -40,6 +44,7 @@ CXXFILES := \
 	$(wildcard eval/*.cpp)
 
 INCLUDES=-I.
+PYTHON_INCLUDE=-I/usr/local/Cellar/python3/3.6.2/
 
 EXE=giraffe
 
@@ -72,10 +77,10 @@ endif
 default: $(EXE)
 
 dep/%.d: %.cpp
-	$(Q) $(CXX) $(CXXFLAGS_DEP) $(INCLUDES) $< -MM -MT $(@:dep/%.d=obj/%.o) > $@
+	$(Q) $(CXX) $(CXXFLAGS_DEP) $(INCLUDES) $(PYTHON_INCLUDE) $< -MM -MT $(@:dep/%.d=obj/%.o) > $@
 	
 obj/%.o :
-	$(Q) $(CXX) $(CXXFLAGS) $(INCLUDES) -c $(@:obj/%.o=%.cpp) -o $@
+	$(Q) $(CXX) $(CXXFLAGS) $(INCLUDES) $(PYTHON_INCLUDE) -c $(@:obj/%.o=%.cpp) -o $@
 
 $(EXE): $(OBJS) gtb/libgtb.a
 	$(Q) $(CXX) $(CXXFLAGS) $(OBJS) -o $(EXE) $(LDFLAGS)
@@ -85,16 +90,16 @@ gtb/libgtb.a:
 
 test:
 	$(Q) echo $(DEPS)
-	
+	k
 clean:
 	-$(Q) rm -f $(DEPS) $(OBJS) $(EXE)
 	
 windows:
 	$(Q) cd gtb && make windows_clean && make CFLAGS=-m32
-	g++ $(CXXFLAGS_BASE) -m32 $(INCLUDES) -O3 -static $(CXXFILES) -o giraffe_w32.exe -Lgtb -lgtb
+	g++ $(CXXFLAGS_BASE) -m32 $(INCLUDES) $(PYTHON_INCLUDE) -O3 -static $(CXXFILES) -o giraffe_w33.exe -Lgtb -lgtb
 	strip -g -s giraffe_w32.exe
 	$(Q) cd gtb && make windows_clean && make CFLAGS=-m64
-	g++ $(CXXFLAGS_BASE) -m64 $(INCLUDES) -O3 -static $(CXXFILES) -o giraffe_w64.exe -Lgtb -lgtb
+	g++ $(CXXFLAGS_BASE) -m64 $(INCLUDES) $(PYTHON_INCLUDE) -O3 -static $(CXXFILES) -o giraffe_w64.exe -Lgtb -lgtb
 	strip -g -s giraffe_w64.exe
 
 no_deps = 
