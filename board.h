@@ -245,7 +245,7 @@ public:
 		return ret;
 	}
 
-	std::string GetFeatures() {
+	std::vector<float> GetFeatures() {
         std::vector<float> m_convTmp;
         FeaturesConv::ConvertBoardToNN(this, m_convTmp);
         return m_convTmp;
@@ -304,6 +304,6 @@ using namespace boost::python;
 
 BOOST_PYTHON_MODULE(feat)
 {
-    class_<FeaturesConv, boost::noncopyable>("FeaturesConv", no_init)
+    class_<FeaturesConv>("FeaturesConv", init<std::string>())
         .def("get_features", &Board::GetFeatures)
 }
